@@ -51,7 +51,14 @@ const Login = () => {
         onSuccess: async (tokenResponse) => {
           try {
             setLoading(true);
-            const response = await googleLogin(tokenResponse.access_token);
+            // useGoogleLogin provides access_token, which we'll use to get user info
+            const token = tokenResponse.access_token;
+            if (!token) {
+              toast.error('No token received from Google');
+              setLoading(false);
+              return;
+            }
+            const response = await googleLogin(token);
             setAuth(response.user, response.token);
             toast.success('Google login successful!');
             
@@ -65,12 +72,16 @@ const Login = () => {
             console.error('Google login error:', error);
             const errorMessage = error.response?.data?.error || error.message || 'Google login failed';
             toast.error(errorMessage);
+            if (error.response?.status === 503) {
+              toast.error('Google OAuth is not configured on the backend. Please contact support.');
+            }
           } finally {
             setLoading(false);
           }
         },
-        onError: () => {
-          toast.error('Google login failed');
+        onError: (error) => {
+          console.error('Google OAuth error:', error);
+          toast.error('Google login failed. Please try again.');
           setLoading(false);
         },
       })

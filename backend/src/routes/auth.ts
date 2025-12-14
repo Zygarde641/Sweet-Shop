@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { body, validationResult } from 'express-validator';
 import { OAuth2Client } from 'google-auth-library';
+import axios from 'axios';
 import { createUser, findUserByEmail } from '../models/User';
 import { hashPassword, comparePassword } from '../utils/password';
 import { generateToken } from '../utils/jwt';
@@ -135,19 +136,44 @@ router.post(
 
       const { token } = req.body;
 
-      // Verify the Google token
-      const ticket = await googleClient.verifyIdToken({
-        idToken: token,
-        audience: process.env.GOOGLE_CLIENT_ID,
-      });
+      let email: string | undefined;
+      let name: string | undefined;
+      let googleId: string | undefined;
 
-      const payload = ticket.getPayload();
-      if (!payload) {
-        res.status(401).json({ error: 'Invalid Google token' });
-        return;
+      // Try to verify as id_token first
+      try {
+        const ticket = await googleClient.verifyIdToken({
+          idToken: token,
+          audience: process.env.GOOGLE_CLIENT_ID,
+        });
+        const payload = ticket.getPayload();
+        if (payload) {
+          email = payload.email;
+          name = payload.name;
+          googleId = payload.sub;
+        }
+      } catch (idTokenError) {
+        // If id_token verification fails, try using access_token to get user info
+        try {
+          const userInfoResponse = await axios.get('https://www.googleapis.com/oauth2/v2/userinfo', {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          email = userInfoResponse.data.email;
+          name = userInfoResponse.data.name;
+          googleId = userInfoResponse.data.id;
+        } catch (accessTokenError) {
+          console.error('Google token verification error:', accessTokenError);
+          res.status(401).json({ error: 'Invalid Google token. Please try logging in again.' });
+          return;
+        }
       }
 
-      const { email, name, sub: googleId } = payload;
+      if (!email) {
+        res.status(400).json({ error: 'Email not provided by Google' });
+        return;
+      }
 
       if (!email) {
         res.status(400).json({ error: 'Email not provided by Google' });

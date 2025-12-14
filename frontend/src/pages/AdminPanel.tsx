@@ -213,7 +213,7 @@ const AdminPanel = () => {
             </tr>
           </thead>
           <tbody>
-            {sweets.map((sweet) => (
+            {sweets && sweets.length > 0 ? sweets.map((sweet) => (
               <tr key={sweet.id}>
                 <td>{sweet.name}</td>
                 <td>{sweet.category}</td>
@@ -231,7 +231,13 @@ const AdminPanel = () => {
                   </button>
                 </td>
               </tr>
-            ))}
+            )) : (
+              <tr>
+                <td colSpan={5} style={{ textAlign: 'center', padding: '2rem' }}>
+                  No sweets found. Click "Add New Sweet" to create one.
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>

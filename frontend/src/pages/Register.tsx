@@ -45,7 +45,13 @@ const Register = () => {
         onSuccess: async (tokenResponse) => {
           try {
             setLoading(true);
-            const response = await googleLogin(tokenResponse.access_token);
+            const token = tokenResponse.access_token || (tokenResponse as any).id_token;
+            if (!token) {
+              toast.error('No token received from Google');
+              setLoading(false);
+              return;
+            }
+            const response = await googleLogin(token);
             setAuth(response.user, response.token);
             toast.success('Google registration successful!');
             navigate('/');
@@ -53,12 +59,16 @@ const Register = () => {
             console.error('Google login error:', error);
             const errorMessage = error.response?.data?.error || error.message || 'Google registration failed';
             toast.error(errorMessage);
+            if (error.response?.status === 503) {
+              toast.error('Google OAuth is not configured on the backend. Please contact support.');
+            }
           } finally {
             setLoading(false);
           }
         },
-        onError: () => {
-          toast.error('Google registration failed');
+        onError: (error) => {
+          console.error('Google OAuth error:', error);
+          toast.error('Google registration failed. Please try again.');
           setLoading(false);
         },
       })
