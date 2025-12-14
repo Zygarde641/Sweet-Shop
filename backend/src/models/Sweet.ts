@@ -164,3 +164,13 @@ export const restockSweet = async (id: string, quantity: number): Promise<Sweet 
   );
   return result.rows[0] || null;
 };
+
+export const releaseSweet = async (id: string, quantity: number): Promise<Sweet | null> => {
+  const result = await query(
+    `UPDATE sweets SET quantity = quantity + $1, updated_at = NOW()
+     WHERE id = $2
+     RETURNING id, name, category, price, quantity, created_at as "createdAt", updated_at as "updatedAt"`,
+    [quantity, id]
+  );
+  return result.rows[0] || null;
+};

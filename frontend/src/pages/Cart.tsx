@@ -75,13 +75,12 @@ const Cart = () => {
                                     onClick={async () => {
                                         try {
                                             await releaseSweet(item.id, item.cartQuantity);
-                                            removeFromCart(item.id);
-                                            toast.success('Item removed and stock released');
+                                            toast.success('Item removed');
                                         } catch (error) {
-                                            toast.error('Failed to release stock');
-                                            // Optional: still remove from cart UI if backend fails?
-                                            // For now, let's keep it safe and enforce sync.
-                                            // Alternatively, force remove: removeFromCart(item.id);
+                                            console.warn('Backend sync failed:', error);
+                                            // Proceed with removal anyway for better UX
+                                        } finally {
+                                            removeFromCart(item.id);
                                         }
                                     }}
                                     className="btn-remove"

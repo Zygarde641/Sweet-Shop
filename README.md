@@ -56,6 +56,16 @@ One of the system's core features is the sophisticated synchronization between t
 -   **Backend**: Hosted on Render.
 -   **Environment**: Strict separation of concerns using environment variables for sensitive configuration.
 
+## 🔐 Admin Credentials
+
+For testing and administrative access, use the following credentials:
+
+-   **Email**: `admin@sweetshop.com`
+-   **Password**: `admin123`
+
+> **Note**: These are default credentials for development/testing purposes. In production, ensure to change these credentials and use environment variables for sensitive data.
+
 ## My AI Usage
 
 During this project, I utilized Cursor as my primary IDE, which provided intelligent code suggestions and helped with debugging tasks. I also consulted claude code for initial planning and ChatGPT for guidance on deployment steps and configuration for Render and Vercel. These tools helped streamline my development workflow, though all core logic and architecture decisions were made independently.
+
