@@ -1,13 +1,16 @@
 import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
 import { useAuthStore } from '../store/authStore';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+// Normalize API URL by removing trailing slash
+const normalizeUrl = (url: string) => url.replace(/\/$/, '');
+const API_URL = normalizeUrl(import.meta.env.VITE_API_URL || 'http://localhost:5000');
 
 const apiClient = axios.create({
   baseURL: `${API_URL}/api`,
   headers: {
     'Content-Type': 'application/json',
   },
+  timeout: 30000, // 30 second timeout
 });
 
 apiClient.interceptors.request.use(

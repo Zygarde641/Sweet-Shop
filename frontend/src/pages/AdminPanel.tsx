@@ -34,15 +34,17 @@ const AdminPanel = () => {
         await queryClient.invalidateQueries('sweets');
         toast.success('Sweet created successfully!');
         setIsModalOpen(false);
+        setEditingSweet(null);
       } catch (error) {
         console.error('Error invalidating queries:', error);
         toast.error('Sweet created but failed to refresh list. Please refresh the page.');
         setIsModalOpen(false);
+        setEditingSweet(null);
       }
     },
     onError: (error: any) => {
       console.error('Create sweet error:', error);
-      const errorMessage = error.response?.data?.error || error.message || 'Failed to create sweet';
+      const errorMessage = error.response?.data?.error || error.response?.data?.errors?.[0]?.msg || error.message || 'Failed to create sweet';
       toast.error(errorMessage);
       // Don't close modal on error so user can fix and retry
     },
@@ -51,39 +53,64 @@ const AdminPanel = () => {
   const updateMutation = useMutation(
     ({ id, data }: { id: string; data: Partial<CreateSweetData> }) => updateSweet(id, data),
     {
-      onSuccess: () => {
-        queryClient.invalidateQueries('sweets');
-        toast.success('Sweet updated successfully!');
-        setIsModalOpen(false);
-        setEditingSweet(null);
+      onSuccess: async () => {
+        try {
+          await queryClient.invalidateQueries('sweets');
+          toast.success('Sweet updated successfully!');
+          setIsModalOpen(false);
+          setEditingSweet(null);
+        } catch (error) {
+          console.error('Error invalidating queries:', error);
+          toast.error('Sweet updated but failed to refresh list. Please refresh the page.');
+          setIsModalOpen(false);
+          setEditingSweet(null);
+        }
       },
       onError: (error: any) => {
-        toast.error(error.response?.data?.error || 'Failed to update sweet');
+        console.error('Update sweet error:', error);
+        const errorMessage = error.response?.data?.error || error.response?.data?.errors?.[0]?.msg || error.message || 'Failed to update sweet';
+        toast.error(errorMessage);
       },
     }
   );
 
   const deleteMutation = useMutation(deleteSweet, {
-    onSuccess: () => {
-      queryClient.invalidateQueries('sweets');
-      toast.success('Sweet deleted successfully!');
+    onSuccess: async () => {
+      try {
+        await queryClient.invalidateQueries('sweets');
+        toast.success('Sweet deleted successfully!');
+      } catch (error) {
+        console.error('Error invalidating queries:', error);
+        toast.error('Sweet deleted but failed to refresh list. Please refresh the page.');
+      }
     },
     onError: (error: any) => {
-      toast.error(error.response?.data?.error || 'Failed to delete sweet');
+      console.error('Delete sweet error:', error);
+      const errorMessage = error.response?.data?.error || error.message || 'Failed to delete sweet';
+      toast.error(errorMessage);
     },
   });
 
   const restockMutation = useMutation(
     ({ id, quantity }: { id: string; quantity: number }) => restockSweet(id, quantity),
     {
-      onSuccess: () => {
-        queryClient.invalidateQueries('sweets');
-        toast.success('Sweet restocked successfully!');
-        setRestockSweetId(null);
-        setRestockQuantity('');
+      onSuccess: async () => {
+        try {
+          await queryClient.invalidateQueries('sweets');
+          toast.success('Sweet restocked successfully!');
+          setRestockSweetId(null);
+          setRestockQuantity('');
+        } catch (error) {
+          console.error('Error invalidating queries:', error);
+          toast.error('Sweet restocked but failed to refresh list. Please refresh the page.');
+          setRestockSweetId(null);
+          setRestockQuantity('');
+        }
       },
       onError: (error: any) => {
-        toast.error(error.response?.data?.error || 'Failed to restock sweet');
+        console.error('Restock sweet error:', error);
+        const errorMessage = error.response?.data?.error || error.message || 'Failed to restock sweet';
+        toast.error(errorMessage);
       },
     }
   );

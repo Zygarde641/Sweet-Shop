@@ -5,10 +5,6 @@ import { register } from '../api/auth';
 import toast from 'react-hot-toast';
 import './Auth.css';
 
-import { useGoogleLogin } from '@react-oauth/google';
-
-const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
-
 const Register = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -41,22 +37,6 @@ const Register = () => {
     }
   };
 
-  // Only enable Google login if client ID is configured
-  const handleGoogleLogin = googleClientId ? useGoogleLogin({
-    onSuccess: async (tokenResponse) => {
-      try {
-        // TODO: Send tokenResponse.access_token to your backend
-        // Backend should verify the token with Google and create/login user
-        toast('Google OAuth: Backend integration needed. Use email/password for now.');
-        console.log('Google token received:', tokenResponse);
-      } catch (error) {
-        toast.error('Google login failed');
-      }
-    },
-    onError: () => {
-      toast.error('Google login failed');
-    },
-  }) : null;
 
   return (
     <div className="auth-container">
@@ -101,16 +81,6 @@ const Register = () => {
             {loading ? 'Registering...' : 'Register'}
           </button>
         </form>
-        {googleClientId && handleGoogleLogin && (
-          <>
-            <div className="auth-divider">
-              <span>OR</span>
-            </div>
-            <button onClick={() => handleGoogleLogin()} className="btn-google" disabled={loading}>
-              Continue with Google
-            </button>
-          </>
-        )}
         <p className="auth-footer">
           Already have an account? <Link to="/login">Login</Link>
         </p>

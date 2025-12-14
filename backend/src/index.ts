@@ -12,14 +12,19 @@ dotenv.config();
 
 const app: Express = express();
 const PORT = process.env.PORT || 5000;
-const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173';
+// Normalize FRONTEND_URL by removing trailing slash
+const FRONTEND_URL = (process.env.FRONTEND_URL || 'http://localhost:5173').replace(/\/$/, '');
 
 // Allow multiple origins for CORS (production + local dev)
+// Normalize all URLs to remove trailing slashes for comparison
+const normalizeOrigin = (url: string) => url.replace(/\/$/, '');
 const allowedOrigins = [
   FRONTEND_URL,
   'https://sweet-shop-sigma.vercel.app',
   'http://localhost:5173',
-].filter(Boolean);
+]
+  .filter(Boolean)
+  .map(normalizeOrigin);
 
 app.use(helmet());
 app.use(
@@ -27,10 +32,11 @@ app.use(
     origin: (origin, callback) => {
       // Allow requests with no origin (like mobile apps or curl requests)
       if (!origin) return callback(null, true);
-      if (allowedOrigins.includes(origin)) {
+      const normalizedOrigin = normalizeOrigin(origin);
+      if (allowedOrigins.includes(normalizedOrigin)) {
         callback(null, true);
       } else {
-        console.warn(`CORS blocked origin: ${origin}`);
+        console.warn(`CORS blocked origin: ${origin} (normalized: ${normalizedOrigin})`);
         callback(new Error('Not allowed by CORS'));
       }
     },
