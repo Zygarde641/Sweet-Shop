@@ -32,8 +32,13 @@ export interface SearchFilters {
 }
 
 export const getSweets = async (): Promise<Sweet[]> => {
-  const response = await apiClient.get<{ sweets: Sweet[] }>('/sweets');
-  return response.data.sweets;
+  try {
+    const response = await apiClient.get<{ sweets: Sweet[] }>('/sweets');
+    return response.data.sweets || [];
+  } catch (error) {
+    console.error('Get sweets error:', error);
+    throw error;
+  }
 };
 
 export const searchSweets = async (filters: SearchFilters): Promise<Sweet[]> => {
@@ -48,8 +53,23 @@ export const searchSweets = async (filters: SearchFilters): Promise<Sweet[]> => 
 };
 
 export const createSweet = async (data: CreateSweetData): Promise<Sweet> => {
-  const response = await apiClient.post<{ sweet: Sweet }>('/sweets', data);
-  return response.data.sweet;
+  try {
+    const response = await apiClient.post<{ sweet: Sweet; message?: string }>('/sweets', data);
+    // Handle both response formats: { sweet } or { message, sweet }
+    const sweet = response.data.sweet;
+    if (!sweet) {
+      throw new Error('Invalid response from server');
+    }
+    // Ensure dates are strings
+    return {
+      ...sweet,
+      createdAt: typeof sweet.createdAt === 'string' ? sweet.createdAt : new Date(sweet.createdAt).toISOString(),
+      updatedAt: typeof sweet.updatedAt === 'string' ? sweet.updatedAt : new Date(sweet.updatedAt).toISOString(),
+    };
+  } catch (error) {
+    console.error('Create sweet error:', error);
+    throw error;
+  }
 };
 
 export const updateSweet = async (id: string, data: UpdateSweetData): Promise<Sweet> => {

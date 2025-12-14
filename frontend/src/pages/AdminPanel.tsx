@@ -20,16 +20,31 @@ const AdminPanel = () => {
 
   const queryClient = useQueryClient();
 
-  const { data: sweets = [], isLoading } = useQuery<Sweet[]>('sweets', getSweets);
+  const { data: sweets = [], isLoading, error: queryError } = useQuery<Sweet[]>('sweets', getSweets, {
+    onError: (error: any) => {
+      console.error('Query error:', error);
+      toast.error('Failed to load sweets. Please refresh the page.');
+    },
+    retry: 1,
+  });
 
   const createMutation = useMutation(createSweet, {
-    onSuccess: () => {
-      queryClient.invalidateQueries('sweets');
-      toast.success('Sweet created successfully!');
-      setIsModalOpen(false);
+    onSuccess: async () => {
+      try {
+        await queryClient.invalidateQueries('sweets');
+        toast.success('Sweet created successfully!');
+        setIsModalOpen(false);
+      } catch (error) {
+        console.error('Error invalidating queries:', error);
+        toast.error('Sweet created but failed to refresh list. Please refresh the page.');
+        setIsModalOpen(false);
+      }
     },
     onError: (error: any) => {
-      toast.error(error.response?.data?.error || 'Failed to create sweet');
+      console.error('Create sweet error:', error);
+      const errorMessage = error.response?.data?.error || error.message || 'Failed to create sweet';
+      toast.error(errorMessage);
+      // Don't close modal on error so user can fix and retry
     },
   });
 
@@ -75,18 +90,29 @@ const AdminPanel = () => {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const data: CreateSweetData = {
-      name: formData.get('name') as string,
-      category: formData.get('category') as string,
-      price: parseFloat(formData.get('price') as string),
-      quantity: parseInt(formData.get('quantity') as string),
-    };
+    try {
+      const formData = new FormData(e.currentTarget);
+      const data: CreateSweetData = {
+        name: formData.get('name') as string,
+        category: formData.get('category') as string,
+        price: parseFloat(formData.get('price') as string),
+        quantity: parseInt(formData.get('quantity') as string),
+      };
 
-    if (editingSweet) {
-      updateMutation.mutate({ id: editingSweet.id, data });
-    } else {
-      createMutation.mutate(data);
+      // Validate data
+      if (!data.name || !data.category || isNaN(data.price) || isNaN(data.quantity)) {
+        toast.error('Please fill in all fields with valid values');
+        return;
+      }
+
+      if (editingSweet) {
+        updateMutation.mutate({ id: editingSweet.id, data });
+      } else {
+        createMutation.mutate(data);
+      }
+    } catch (error) {
+      console.error('Form submit error:', error);
+      toast.error('An error occurred. Please try again.');
     }
   };
 
@@ -123,6 +149,20 @@ const AdminPanel = () => {
 
   if (isLoading) {
     return <div className="admin-panel">Loading...</div>;
+  }
+
+  if (queryError) {
+    return (
+      <div className="admin-panel">
+        <div style={{ padding: '2rem', textAlign: 'center' }}>
+          <h2>Error Loading Sweets</h2>
+          <p>Unable to load sweets. Please check your connection and try again.</p>
+          <button onClick={() => window.location.reload()} className="btn-primary">
+            Refresh Page
+          </button>
+        </div>
+      </div>
+    );
   }
 
   return (
