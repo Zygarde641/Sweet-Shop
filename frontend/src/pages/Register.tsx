@@ -27,7 +27,15 @@ const Register = () => {
       toast.success('Registration successful!');
       navigate('/');
     } catch (error: any) {
-      toast.error(error.response?.data?.error || 'Registration failed');
+      console.error('Registration error:', error);
+      const errorMessage = error.response?.data?.error || error.message || 'Registration failed. Please try again.';
+      toast.error(errorMessage);
+      
+      // Log network errors for debugging
+      if (!error.response) {
+        console.error('Network error - Backend may be down or unreachable');
+        toast.error('Cannot connect to server. Please check if the backend is running.');
+      }
     } finally {
       setLoading(false);
     }

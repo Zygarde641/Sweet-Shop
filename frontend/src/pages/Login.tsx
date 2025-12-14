@@ -32,7 +32,15 @@ const Login = () => {
         navigate('/');
       }
     } catch (error: any) {
-      toast.error(error.response?.data?.error || 'Login failed');
+      console.error('Login error:', error);
+      const errorMessage = error.response?.data?.error || error.message || 'Login failed. Please check your credentials and try again.';
+      toast.error(errorMessage);
+      
+      // Log network errors for debugging
+      if (!error.response) {
+        console.error('Network error - Backend may be down or unreachable');
+        toast.error('Cannot connect to server. Please check if the backend is running.');
+      }
     } finally {
       setLoading(false);
     }
