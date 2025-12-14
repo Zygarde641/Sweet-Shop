@@ -90,8 +90,12 @@ const initializeDatabase = async () => {
       }
       
       console.log('✅ Database schema initialized successfully!');
-      
-      // Create default admin user
+    } else {
+      console.log('✅ Database schema already exists.');
+    }
+    
+    // Always check and create default admin user if it doesn't exist
+    try {
       const { hashPassword } = require('./utils/password');
       const adminEmail = 'admin@sweetshop.com';
       const adminPassword = 'admin123';
@@ -110,9 +114,12 @@ const initializeDatabase = async () => {
         console.log('✅ Default admin user created!');
         console.log('   Email: admin@sweetshop.com');
         console.log('   Password: admin123');
+      } else {
+        console.log('✅ Admin user already exists.');
       }
-    } else {
-      console.log('✅ Database schema already exists.');
+    } catch (error) {
+      console.error('Error creating admin user:', error);
+      // Don't exit - let the server start anyway
     }
   } catch (error) {
     console.error('Database initialization error:', error);

@@ -77,6 +77,15 @@ A full-stack web application for managing a sweet shop inventory, built with mod
 
 **Note**: The default admin user is automatically created when the database is initialized. You can change these credentials after first login or create additional admin users through the database.
 
+## Default Admin Credentials
+
+**For Employee/Admin Login:**
+- **Email**: `admin@sweetshop.com`
+- **Password**: `admin123`
+- **Role**: Admin (full access to admin panel)
+
+**Note**: The default admin user is automatically created when the database is initialized. You can change these credentials after first login or create additional admin users through the database.
+
 ## Getting Started
 
 ### Prerequisites
