@@ -55,7 +55,7 @@ const Layout = () => {
               <span className="theme-toggle-slider"></span>
             </label>
             <Link to="/cart" className="cart-link">
-              🛒 <span className="cart-badge">{useCartStore.getState().items.reduce((total, item) => total + item.cartQuantity, 0)}</span>
+              🛒 <span className="cart-badge">{useCartStore((state) => state.items.reduce((total, item) => total + item.cartQuantity, 0))}</span>
             </Link>
             <span className="user-name">{user?.name}</span>
             <button onClick={handleLogout} className="logout-btn">
