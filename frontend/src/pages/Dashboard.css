@@ -25,6 +25,14 @@
   border-radius: 6px;
   font-size: 1rem;
   transition: border-color 0.2s;
+  background-color: var(--surface);
+  color: var(--text-primary);
+}
+
+.dark-mode .filter-input,
+.dark-mode .filter-select {
+  background-color: #2a2a2a;
+  color: var(--text-primary);
 }
 
 .filter-input:focus,

@@ -164,6 +164,13 @@
   border: 1px solid var(--border-color);
   border-radius: 6px;
   font-size: 1rem;
+  background-color: var(--surface);
+  color: var(--text-primary);
+}
+
+.dark-mode .modal-content .form-group input {
+  background-color: #2a2a2a;
+  color: var(--text-primary);
 }
 
 .modal-content .form-group input:focus {
