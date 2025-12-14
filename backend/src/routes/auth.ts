@@ -175,17 +175,15 @@ router.post(
         return;
       }
 
-      if (!email) {
-        res.status(400).json({ error: 'Email not provided by Google' });
-        return;
-      }
+      // Ensure googleId has a value (use email as fallback if needed)
+      const userIdForPassword = googleId || email || 'google-user';
 
       // Check if user exists
       let user = await findUserByEmail(email);
 
       if (!user) {
         // Create new user with Google account
-        const hashedPassword = await hashPassword(googleId + Date.now()); // Random password since they use Google
+        const hashedPassword = await hashPassword(userIdForPassword + Date.now()); // Random password since they use Google
         user = await createUser({
           email,
           password: hashedPassword,

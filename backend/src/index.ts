@@ -54,8 +54,23 @@ const limiter = rateLimit({
 
 app.use('/api/', limiter);
 
-app.get('/health', (_req, res) => {
-  res.json({ status: 'ok', message: 'Sweet Shop API is running' });
+app.get('/health', async (_req, res) => {
+  try {
+    // Test database connection
+    await query('SELECT 1');
+    res.json({ 
+      status: 'ok', 
+      message: 'Sweet Shop API is running',
+      database: 'connected'
+    });
+  } catch (error) {
+    res.status(500).json({ 
+      status: 'error', 
+      message: 'Sweet Shop API is running but database connection failed',
+      database: 'disconnected',
+      error: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
 });
 
 // Initialize database schema on startup (only if tables don't exist)
