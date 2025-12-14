@@ -73,26 +73,18 @@ const Dashboard = () => {
 
   // Always render the page structure, even during loading or errors
   // #region agent log
-  fetch('http://127.0.0.1:7242/ingest/c49dae96-4ee7-4b7f-a49b-2dc2505269f5',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Dashboard.tsx:74',message:'Render decision point',data:{isLoading,hasError:!!queryError},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'D'})}).catch(()=>{});
+  fetch('http://127.0.0.1:7242/ingest/c49dae96-4ee7-4b7f-a49b-2dc2505269f5',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Dashboard.tsx:74',message:'Render decision point',data:{isLoading,hasError:!!queryError,sweetsCount:sweets?.length||0},timestamp:Date.now(),sessionId:'debug-session',runId:'run2',hypothesisId:'D'})}).catch(()=>{});
+  // #endregion
+
+  // #region agent log
+  fetch('http://127.0.0.1:7242/ingest/c49dae96-4ee7-4b7f-a49b-2dc2505269f5',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Dashboard.tsx:79',message:'Rendering Dashboard JSX',data:{willRenderFilters:true,willRenderSweets:!isLoading&&!queryError},timestamp:Date.now(),sessionId:'debug-session',runId:'run2',hypothesisId:'E'})}).catch(()=>{});
   // #endregion
 
   return (
     <div className="dashboard">
       <h1>Sweet Shop</h1>
-      {isLoading && (
-        <div className="loading">Loading sweets...</div>
-      )}
-      {queryError && (
-        <div className="error-container">
-          <h2>Error Loading Sweets</h2>
-          <p>Unable to load sweets. Please check your connection and try again.</p>
-          <button onClick={() => refetch()} className="btn-primary" style={{ marginTop: '1rem' }}>
-            Retry
-          </button>
-        </div>
-      )}
-      {!isLoading && !queryError && (
-        <>
+      
+      {/* Always show filters */}
       <div className="filters">
         <input
           type="text"
@@ -137,36 +129,56 @@ const Dashboard = () => {
           </button>
         )}
       </div>
-      <div className="sweets-count">
-        {sweets.length} {sweets.length === 1 ? 'sweet' : 'sweets'} found
-      </div>
-      <div className="sweets-grid">
-        {sweets && sweets.length > 0 ? (
-          sweets.map((sweet) => (
-            <div key={sweet.id} className="sweet-card">
-              <div className="sweet-image">🍬</div>
-              <div className="sweet-info">
-                <h3>{sweet.name}</h3>
-                <p className="sweet-category">{sweet.category}</p>
-                <p className="sweet-price">${typeof sweet.price === 'number' ? sweet.price.toFixed(2) : (parseFloat(String(sweet.price)) || 0).toFixed(2)}</p>
-                <p className="sweet-quantity">
-                  {sweet.quantity > 0 ? `${sweet.quantity} in stock` : 'Out of stock'}
-                </p>
-              </div>
-              <button
-                onClick={() => handlePurchase(sweet, 1)}
-                disabled={sweet.quantity === 0}
-                className="purchase-btn"
-              >
-                {sweet.quantity === 0 ? 'Out of Stock' : 'Add to Cart'}
-              </button>
-            </div>
-          ))
-        ) : null}
-      </div>
-      {(!sweets || sweets.length === 0) && (
-        <div className="no-sweets">No sweets found. Try adjusting your filters.</div>
+
+      {/* Show loading state */}
+      {isLoading && (
+        <div className="loading">Loading sweets...</div>
       )}
+
+      {/* Show error state */}
+      {queryError && (
+        <div className="error-container">
+          <h2>Error Loading Sweets</h2>
+          <p>Unable to load sweets. Please check your connection and try again.</p>
+          <button onClick={() => refetch()} className="btn-primary" style={{ marginTop: '1rem' }}>
+            Retry
+          </button>
+        </div>
+      )}
+
+      {/* Show sweets content when not loading and no error */}
+      {!isLoading && !queryError && (
+        <>
+          <div className="sweets-count">
+            {sweets.length} {sweets.length === 1 ? 'sweet' : 'sweets'} found
+          </div>
+          <div className="sweets-grid">
+            {sweets && sweets.length > 0 ? (
+              sweets.map((sweet) => (
+                <div key={sweet.id} className="sweet-card">
+                  <div className="sweet-image">🍬</div>
+                  <div className="sweet-info">
+                    <h3>{sweet.name}</h3>
+                    <p className="sweet-category">{sweet.category}</p>
+                    <p className="sweet-price">${typeof sweet.price === 'number' ? sweet.price.toFixed(2) : (parseFloat(String(sweet.price)) || 0).toFixed(2)}</p>
+                    <p className="sweet-quantity">
+                      {sweet.quantity > 0 ? `${sweet.quantity} in stock` : 'Out of stock'}
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => handlePurchase(sweet, 1)}
+                    disabled={sweet.quantity === 0}
+                    className="purchase-btn"
+                  >
+                    {sweet.quantity === 0 ? 'Out of Stock' : 'Add to Cart'}
+                  </button>
+                </div>
+              ))
+            ) : null}
+          </div>
+          {(!sweets || sweets.length === 0) && (
+            <div className="no-sweets">No sweets found. Try adjusting your filters.</div>
+          )}
         </>
       )}
     </div>
