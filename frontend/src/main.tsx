@@ -8,11 +8,18 @@ import { useThemeStore } from './store/themeStore';
 import App from './App';
 import './index.css';
 
-// Initialize dark mode on load
-const { isDarkMode } = useThemeStore.getState();
-if (isDarkMode) {
-  document.documentElement.classList.add('dark-mode');
-}
+// Initialize dark mode on load (before React renders)
+const initializeTheme = () => {
+  const { isDarkMode } = useThemeStore.getState();
+  if (isDarkMode) {
+    document.documentElement.classList.add('dark-mode');
+  } else {
+    document.documentElement.classList.remove('dark-mode');
+  }
+};
+
+// Run immediately
+initializeTheme();
 
 const queryClient = new QueryClient({
   defaultOptions: {
