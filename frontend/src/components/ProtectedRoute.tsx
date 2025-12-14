@@ -8,17 +8,22 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute = ({ children, requireAdmin = false }: ProtectedRouteProps) => {
-  const { user, token } = useAuthStore();
+  try {
+    const { user, token } = useAuthStore();
 
-  if (!token || !user) {
+    if (!token || !user) {
+      return <Navigate to="/login" replace />;
+    }
+
+    if (requireAdmin && user.role !== 'admin') {
+      return <Navigate to="/" replace />;
+    }
+
+    return <>{children}</>;
+  } catch (error) {
+    console.error('ProtectedRoute error:', error);
     return <Navigate to="/login" replace />;
   }
-
-  if (requireAdmin && user.role !== 'admin') {
-    return <Navigate to="/" replace />;
-  }
-
-  return <>{children}</>;
 };
 
 export default ProtectedRoute;

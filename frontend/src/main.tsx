@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { GoogleOAuthProvider } from '@react-oauth/google';
+import ErrorBoundary from './components/ErrorBoundary';
 import App from './App';
 import './index.css';
 
@@ -41,8 +42,15 @@ const AppWrapper = () => {
   );
 };
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
+const rootElement = document.getElementById('root');
+if (!rootElement) {
+  throw new Error('Root element not found');
+}
+
+ReactDOM.createRoot(rootElement).render(
   <React.StrictMode>
-    <AppWrapper />
+    <ErrorBoundary>
+      <AppWrapper />
+    </ErrorBoundary>
   </React.StrictMode>
 );
