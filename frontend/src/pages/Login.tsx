@@ -41,7 +41,7 @@ const Login = () => {
   const handleGoogleLogin = googleClientId ? useGoogleLogin({
     onSuccess: async (tokenResponse) => {
       try {
-        toast.info('Google OAuth: Backend integration needed. Use email/password for now.');
+        toast('Google OAuth: Backend integration needed. Use email/password for now.');
         console.log('Google token received:', tokenResponse);
       } catch (error) {
         toast.error('Google login failed');

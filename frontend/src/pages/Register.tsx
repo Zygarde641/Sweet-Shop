@@ -39,7 +39,7 @@ const Register = () => {
       try {
         // TODO: Send tokenResponse.access_token to your backend
         // Backend should verify the token with Google and create/login user
-        toast.info('Google OAuth: Backend integration needed. Use email/password for now.');
+        toast('Google OAuth: Backend integration needed. Use email/password for now.');
         console.log('Google token received:', tokenResponse);
       } catch (error) {
         toast.error('Google login failed');
