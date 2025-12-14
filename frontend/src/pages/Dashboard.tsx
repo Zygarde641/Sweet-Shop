@@ -71,17 +71,18 @@ const Dashboard = () => {
     setMaxPrice('');
   };
 
-  if (isLoading) {
-    return (
-      <div className="dashboard">
-        <div className="loading">Loading sweets...</div>
-      </div>
-    );
-  }
+  // Always render the page structure, even during loading or errors
+  // #region agent log
+  fetch('http://127.0.0.1:7242/ingest/c49dae96-4ee7-4b7f-a49b-2dc2505269f5',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Dashboard.tsx:74',message:'Render decision point',data:{isLoading,hasError:!!queryError},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'D'})}).catch(()=>{});
+  // #endregion
 
-  if (queryError) {
-    return (
-      <div className="dashboard">
+  return (
+    <div className="dashboard">
+      <h1>Sweet Shop</h1>
+      {isLoading && (
+        <div className="loading">Loading sweets...</div>
+      )}
+      {queryError && (
         <div className="error-container">
           <h2>Error Loading Sweets</h2>
           <p>Unable to load sweets. Please check your connection and try again.</p>
@@ -89,16 +90,9 @@ const Dashboard = () => {
             Retry
           </button>
         </div>
-      </div>
-    );
-  }
-
-  // #region agent log
-  fetch('http://127.0.0.1:7242/ingest/c49dae96-4ee7-4b7f-a49b-2dc2505269f5',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Dashboard.tsx:87',message:'Rendering main dashboard content',data:{sweetsCount:sweets?.length||0},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'E'})}).catch(()=>{});
-  // #endregion
-  return (
-    <div className="dashboard">
-      <h1>Sweet Shop</h1>
+      )}
+      {!isLoading && !queryError && (
+        <>
       <div className="filters">
         <input
           type="text"
@@ -170,7 +164,7 @@ const Dashboard = () => {
           ))
         ) : null}
       </div>
-      {(!sweets || sweets.length === 0) && !isLoading && (
+      {(!sweets || sweets.length === 0) && (
         <div className="no-sweets">No sweets found. Try adjusting your filters.</div>
       )}
         </>

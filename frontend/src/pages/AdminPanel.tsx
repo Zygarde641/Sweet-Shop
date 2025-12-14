@@ -185,12 +185,9 @@ const AdminPanel = () => {
 
   // Always render the page structure, even during loading or errors
   // #region agent log
-  fetch('http://127.0.0.1:7242/ingest/c49dae96-4ee7-4b7f-a49b-2dc2505269f5',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'AdminPanel.tsx:177',message:'Render decision point',data:{isLoading,hasError:!!queryError,willShowLoading:isLoading,willShowError:!!queryError},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'D'})}).catch(()=>{});
+  fetch('http://127.0.0.1:7242/ingest/c49dae96-4ee7-4b7f-a49b-2dc2505269f5',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'AdminPanel.tsx:177',message:'Render decision point',data:{isLoading,hasError:!!queryError},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'D'})}).catch(()=>{});
   // #endregion
 
-  // #region agent log
-  fetch('http://127.0.0.1:7242/ingest/c49dae96-4ee7-4b7f-a49b-2dc2505269f5',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'AdminPanel.tsx:199',message:'Rendering main admin panel content',data:{sweetsCount:sweets?.length||0},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'E'})}).catch(()=>{});
-  // #endregion
   return (
     <div className="admin-panel">
       <div className="admin-header">
@@ -200,7 +197,20 @@ const AdminPanel = () => {
         </button>
       </div>
 
-      <div className="sweets-table-container">
+      {isLoading && (
+        <div className="loading">Loading...</div>
+      )}
+      {queryError && (
+        <div className="error-container">
+          <h2>Error Loading Sweets</h2>
+          <p>Unable to load sweets. Please check your connection and try again.</p>
+          <button onClick={() => window.location.reload()} className="btn-primary">
+            Refresh Page
+          </button>
+        </div>
+      )}
+      {!isLoading && !queryError && (
+        <div className="sweets-table-container">
         <table className="sweets-table">
           <thead>
             <tr>
