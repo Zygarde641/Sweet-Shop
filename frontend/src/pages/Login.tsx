@@ -5,17 +5,9 @@ import { login } from '../api/auth';
 import toast from 'react-hot-toast';
 import './Auth.css';
 
-// Conditionally import Google OAuth
-let useGoogleLogin: any = null;
+import { useGoogleLogin } from '@react-oauth/google';
+
 const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
-if (googleClientId) {
-  try {
-    const googleAuth = require('@react-oauth/google');
-    useGoogleLogin = googleAuth.useGoogleLogin;
-  } catch (e) {
-    console.warn('Google OAuth not available');
-  }
-}
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -41,7 +33,7 @@ const Login = () => {
   };
 
   // Only enable Google login if client ID is configured
-  const handleGoogleLogin = useGoogleLogin ? useGoogleLogin({
+  const handleGoogleLogin = googleClientId ? useGoogleLogin({
     onSuccess: async (tokenResponse) => {
       try {
         // TODO: Send tokenResponse.access_token to your backend
@@ -89,9 +81,6 @@ const Login = () => {
             {loading ? 'Logging in...' : 'Login'}
           </button>
         </form>
-        <div className="auth-divider">
-          <span>OR</span>
-        </div>
         {googleClientId && handleGoogleLogin && (
           <>
             <div className="auth-divider">
