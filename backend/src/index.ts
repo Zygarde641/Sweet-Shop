@@ -171,8 +171,40 @@ app.use('/api/auth', authRoutes);
 app.use('/api/sweets', sweetRoutes);
 app.use('/api/sweets', inventoryRoutes);
 
+// Root route - provide API information
+app.get('/', (_req, res) => {
+  res.json({
+    message: 'Sweet Shop Management System API',
+    version: '1.0.0',
+    status: 'running',
+    endpoints: {
+      health: '/health',
+      auth: {
+        register: 'POST /api/auth/register',
+        login: 'POST /api/auth/login',
+        google: 'POST /api/auth/google',
+      },
+      sweets: {
+        getAll: 'GET /api/sweets',
+        search: 'GET /api/sweets/search',
+        create: 'POST /api/sweets (Admin only)',
+        update: 'PUT /api/sweets/:id (Admin only)',
+        delete: 'DELETE /api/sweets/:id (Admin only)',
+        purchase: 'POST /api/sweets/:id/purchase',
+        restock: 'POST /api/sweets/:id/restock (Admin only)',
+      },
+    },
+    documentation: 'This is a REST API. Use the frontend at https://sweet-shop-sigma.vercel.app or make API requests to the endpoints listed above.',
+  });
+});
+
+// 404 handler for undefined routes
 app.use((_req, res) => {
-  res.status(404).json({ error: 'Route not found' });
+  res.status(404).json({ 
+    error: 'Route not found',
+    message: 'This API endpoint does not exist. Check the root route (/) for available endpoints.',
+    availableRoutes: ['/', '/health', '/api/auth', '/api/sweets'],
+  });
 });
 
 app.use((err: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
