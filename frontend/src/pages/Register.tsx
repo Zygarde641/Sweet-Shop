@@ -1,9 +1,12 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useGoogleLogin } from '@react-oauth/google';
 import { useAuthStore } from '../store/authStore';
-import { register } from '../api/auth';
+import { register, googleLogin } from '../api/auth';
 import toast from 'react-hot-toast';
 import './Auth.css';
+
+const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
 const Register = () => {
   const [name, setName] = useState('');
@@ -36,6 +39,30 @@ const Register = () => {
       setLoading(false);
     }
   };
+
+  const handleGoogleLogin = googleClientId
+    ? useGoogleLogin({
+        onSuccess: async (tokenResponse) => {
+          try {
+            setLoading(true);
+            const response = await googleLogin(tokenResponse.access_token);
+            setAuth(response.user, response.token);
+            toast.success('Google registration successful!');
+            navigate('/');
+          } catch (error: any) {
+            console.error('Google login error:', error);
+            const errorMessage = error.response?.data?.error || error.message || 'Google registration failed';
+            toast.error(errorMessage);
+          } finally {
+            setLoading(false);
+          }
+        },
+        onError: () => {
+          toast.error('Google registration failed');
+          setLoading(false);
+        },
+      })
+    : null;
 
 
   return (
@@ -81,6 +108,16 @@ const Register = () => {
             {loading ? 'Registering...' : 'Register'}
           </button>
         </form>
+        {googleClientId && handleGoogleLogin && (
+          <>
+            <div className="auth-divider">
+              <span>OR</span>
+            </div>
+            <button onClick={() => handleGoogleLogin()} className="btn-google" disabled={loading}>
+              Continue with Google
+            </button>
+          </>
+        )}
         <p className="auth-footer">
           Already have an account? <Link to="/login">Login</Link>
         </p>

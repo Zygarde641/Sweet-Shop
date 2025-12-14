@@ -1,9 +1,12 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useGoogleLogin } from '@react-oauth/google';
 import { useAuthStore } from '../store/authStore';
-import { login } from '../api/auth';
+import { login, googleLogin } from '../api/auth';
 import toast from 'react-hot-toast';
 import './Auth.css';
+
+const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
 const Login = () => {
   const [loginType, setLoginType] = useState<'user' | 'employee'>('user');
@@ -42,6 +45,36 @@ const Login = () => {
       setLoading(false);
     }
   };
+
+  const handleGoogleLogin = googleClientId
+    ? useGoogleLogin({
+        onSuccess: async (tokenResponse) => {
+          try {
+            setLoading(true);
+            const response = await googleLogin(tokenResponse.access_token);
+            setAuth(response.user, response.token);
+            toast.success('Google login successful!');
+            
+            // Redirect based on role
+            if (response.user.role === 'admin') {
+              navigate('/admin');
+            } else {
+              navigate('/');
+            }
+          } catch (error: any) {
+            console.error('Google login error:', error);
+            const errorMessage = error.response?.data?.error || error.message || 'Google login failed';
+            toast.error(errorMessage);
+          } finally {
+            setLoading(false);
+          }
+        },
+        onError: () => {
+          toast.error('Google login failed');
+          setLoading(false);
+        },
+      })
+    : null;
 
 
   return (
@@ -97,6 +130,16 @@ const Login = () => {
                 {loading ? 'Logging in...' : 'Login'}
               </button>
             </form>
+            {googleClientId && handleGoogleLogin && (
+              <>
+                <div className="auth-divider">
+                  <span>OR</span>
+                </div>
+                <button onClick={() => handleGoogleLogin()} className="btn-google" disabled={loading}>
+                  Continue with Google
+                </button>
+              </>
+            )}
             <p className="auth-footer">
               Don't have an account? <Link to="/register">Register</Link>
             </p>

@@ -23,11 +23,18 @@ const Dashboard = () => {
 
   const hasFilters = searchTerm || categoryFilter || minPrice || maxPrice;
 
-  const { data: sweets = [], isLoading, refetch } = useQuery<Sweet[]>(
+  const { data: sweets = [], isLoading, error: queryError, refetch } = useQuery<Sweet[]>(
     ['sweets', filters],
     () => (hasFilters ? searchSweets(filters) : getSweets()),
     {
       refetchInterval: 30000,
+      retry: 1,
+      onError: (error: any) => {
+        console.error('Query error:', error);
+        if (error.response?.status !== 401) {
+          toast.error('Failed to load sweets. Please refresh the page.');
+        }
+      },
     }
   );
 
@@ -59,6 +66,20 @@ const Dashboard = () => {
     return (
       <div className="dashboard">
         <div className="loading">Loading sweets...</div>
+      </div>
+    );
+  }
+
+  if (queryError) {
+    return (
+      <div className="dashboard">
+        <div style={{ padding: '2rem', textAlign: 'center' }}>
+          <h2>Error Loading Sweets</h2>
+          <p>Unable to load sweets. Please check your connection and try again.</p>
+          <button onClick={() => refetch()} className="btn-primary" style={{ marginTop: '1rem' }}>
+            Retry
+          </button>
+        </div>
       </div>
     );
   }

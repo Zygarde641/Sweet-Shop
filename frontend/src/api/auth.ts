@@ -31,3 +31,8 @@ export const login = async (data: LoginData): Promise<AuthResponse> => {
   const response = await apiClient.post<AuthResponse>('/auth/login', data);
   return response.data;
 };
+
+export const googleLogin = async (token: string): Promise<AuthResponse> => {
+  const response = await apiClient.post<AuthResponse>('/auth/google', { token });
+  return response.data;
+};
