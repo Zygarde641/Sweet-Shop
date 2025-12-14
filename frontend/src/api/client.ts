@@ -5,6 +5,11 @@ import { useAuthStore } from '../store/authStore';
 const normalizeUrl = (url: string) => url.replace(/\/$/, '');
 const API_URL = normalizeUrl(import.meta.env.VITE_API_URL || 'http://localhost:5000');
 
+// Log API URL in development (not in production to avoid exposing URLs)
+if (import.meta.env.DEV) {
+  console.log('API URL:', API_URL);
+}
+
 const apiClient = axios.create({
   baseURL: `${API_URL}/api`,
   headers: {

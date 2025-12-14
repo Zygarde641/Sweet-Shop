@@ -44,13 +44,27 @@ const AppWrapper = () => {
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
-  throw new Error('Root element not found');
+  console.error('Root element not found!');
+  document.body.innerHTML = '<div style="padding: 2rem; text-align: center;"><h1>Error: Root element not found</h1><p>Please check if index.html has a div with id="root"</p></div>';
+} else {
+  try {
+    ReactDOM.createRoot(rootElement).render(
+      <React.StrictMode>
+        <ErrorBoundary>
+          <AppWrapper />
+        </ErrorBoundary>
+      </React.StrictMode>
+    );
+  } catch (error) {
+    console.error('Failed to render app:', error);
+    rootElement.innerHTML = `
+      <div style="padding: 2rem; text-align: center;">
+        <h1>Failed to load application</h1>
+        <p>Error: ${error instanceof Error ? error.message : 'Unknown error'}</p>
+        <button onclick="window.location.reload()" style="margin-top: 1rem; padding: 0.75rem 1.5rem; background: #ff6b9d; color: white; border: none; border-radius: 6px; cursor: pointer;">
+          Reload Page
+        </button>
+      </div>
+    `;
+  }
 }
-
-ReactDOM.createRoot(rootElement).render(
-  <React.StrictMode>
-    <ErrorBoundary>
-      <AppWrapper />
-    </ErrorBoundary>
-  </React.StrictMode>
-);
