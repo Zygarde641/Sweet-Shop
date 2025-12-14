@@ -4,6 +4,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import AdminPanel from './pages/AdminPanel';
+import Cart from './pages/Cart';
 import ProtectedRoute from './components/ProtectedRoute';
 import Layout from './components/Layout';
 
@@ -23,6 +24,7 @@ function App() {
           }
         >
           <Route index element={<Dashboard />} />
+          <Route path="cart" element={<Cart />} />
           <Route
             path="admin"
             element={

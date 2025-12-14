@@ -1,12 +1,13 @@
 import { Outlet, Link, useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useAuthStore } from '../store/authStore';
+import { useCartStore } from '../store/cartStore';
 import { useThemeStore } from '../store/themeStore';
 import './Layout.css';
 
 const Layout = () => {
   // #region agent log
-  fetch('http://127.0.0.1:7242/ingest/c49dae96-4ee7-4b7f-a49b-2dc2505269f5',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Layout.tsx:7',message:'Layout component rendered',data:{hasUser:!!useAuthStore.getState().user},timestamp:Date.now(),sessionId:'debug-session',runId:'run2',hypothesisId:'A'})}).catch(()=>{});
+  fetch('http://127.0.0.1:7242/ingest/c49dae96-4ee7-4b7f-a49b-2dc2505269f5', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ location: 'Layout.tsx:7', message: 'Layout component rendered', data: { hasUser: !!useAuthStore.getState().user }, timestamp: Date.now(), sessionId: 'debug-session', runId: 'run2', hypothesisId: 'A' }) }).catch(() => { });
   // #endregion
   const { user, logout } = useAuthStore();
   const { isDarkMode, toggleTheme } = useThemeStore();
@@ -53,6 +54,9 @@ const Layout = () => {
               />
               <span className="theme-toggle-slider"></span>
             </label>
+            <Link to="/cart" className="cart-link">
+              🛒 <span className="cart-badge">{useCartStore.getState().items.reduce((total, item) => total + item.cartQuantity, 0)}</span>
+            </Link>
             <span className="user-name">{user?.name}</span>
             <button onClick={handleLogout} className="logout-btn">
               Logout
@@ -63,7 +67,7 @@ const Layout = () => {
       <main className="main-content">
         {/* #region agent log */}
         {(() => {
-          fetch('http://127.0.0.1:7242/ingest/c49dae96-4ee7-4b7f-a49b-2dc2505269f5',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Layout.tsx:60',message:'Rendering Outlet',data:{timestamp:Date.now()},timestamp:Date.now(),sessionId:'debug-session',runId:'run2',hypothesisId:'E'})}).catch(()=>{});
+          fetch('http://127.0.0.1:7242/ingest/c49dae96-4ee7-4b7f-a49b-2dc2505269f5', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ location: 'Layout.tsx:60', message: 'Rendering Outlet', data: { timestamp: Date.now() }, timestamp: Date.now(), sessionId: 'debug-session', runId: 'run2', hypothesisId: 'E' }) }).catch(() => { });
           return null;
         })()}
         {/* #endregion */}

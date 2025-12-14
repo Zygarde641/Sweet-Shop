@@ -166,8 +166,35 @@ const Dashboard = () => {
                       {sweet.quantity > 0 ? `${sweet.quantity} in stock` : 'Out of stock'}
                     </p>
                   </div>
+                  <div className="quantity-selector">
+                    <input
+                      type="number"
+                      min="1"
+                      max={sweet.quantity}
+                      defaultValue="1"
+                      onChange={(e) => {
+                        // We will use a ref or just keep it simple with a data attribute processing in click for now, 
+                        // but to be clean let's use a local variable in the closure of the map or similar?
+                        // Actually React map needs state. 
+                        // Simplest: Just use an input with ID linked to sweet ID and read it in handler? 
+                        // Or better: Controlled component approach with local state map.
+                        const val = parseInt(e.target.value);
+                        if (!isNaN(val)) {
+                          e.target.setAttribute('data-quantity', val.toString());
+                        }
+                      }}
+                      className="qty-input"
+                      data-quantity="1"
+                      id={`qty-${sweet.id}`}
+                    />
+                  </div>
                   <button
-                    onClick={() => handlePurchase(sweet, 1)}
+                    onClick={() => {
+                      // Read the quantity from the input belonging to this card
+                      const input = document.getElementById(`qty-${sweet.id}`) as HTMLInputElement;
+                      const quantity = input ? parseInt(input.value) : 1;
+                      handlePurchase(sweet, quantity);
+                    }}
                     disabled={sweet.quantity === 0}
                     className="purchase-btn"
                   >
