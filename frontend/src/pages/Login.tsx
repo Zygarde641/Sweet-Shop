@@ -30,7 +30,7 @@ const Login = () => {
   };
 
   const handleGoogleLogin = useGoogleLogin({
-    onSuccess: async (tokenResponse) => {
+    onSuccess: async (_tokenResponse) => {
       try {
         // In a real app, you would send this token to your backend
         // For now, we'll show a message

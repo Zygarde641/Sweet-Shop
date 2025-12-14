@@ -31,7 +31,7 @@ const Register = () => {
   };
 
   const handleGoogleLogin = useGoogleLogin({
-    onSuccess: async (tokenResponse) => {
+    onSuccess: async (_tokenResponse) => {
       try {
         toast.error('Google OAuth backend integration required');
       } catch (error) {
