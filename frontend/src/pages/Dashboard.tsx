@@ -137,7 +137,7 @@ const Dashboard = () => {
       )}
 
       {/* Show error state */}
-      {queryError && (
+      {!!queryError && (
         <div className="error-container">
           <h2>Error Loading Sweets</h2>
           <p>Unable to load sweets. Please check your connection and try again.</p>
