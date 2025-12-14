@@ -135,26 +135,28 @@ const Dashboard = () => {
         {sweets.length} {sweets.length === 1 ? 'sweet' : 'sweets'} found
       </div>
       <div className="sweets-grid">
-        {sweets && sweets.length > 0 ? sweets.map((sweet) => (
-          <div key={sweet.id} className="sweet-card">
-            <div className="sweet-image">🍬</div>
-            <div className="sweet-info">
-              <h3>{sweet.name}</h3>
-              <p className="sweet-category">{sweet.category}</p>
-              <p className="sweet-price">${sweet.price.toFixed(2)}</p>
-              <p className="sweet-quantity">
-                {sweet.quantity > 0 ? `${sweet.quantity} in stock` : 'Out of stock'}
-              </p>
+        {sweets && sweets.length > 0 ? (
+          sweets.map((sweet) => (
+            <div key={sweet.id} className="sweet-card">
+              <div className="sweet-image">🍬</div>
+              <div className="sweet-info">
+                <h3>{sweet.name}</h3>
+                <p className="sweet-category">{sweet.category}</p>
+                <p className="sweet-price">${sweet.price.toFixed(2)}</p>
+                <p className="sweet-quantity">
+                  {sweet.quantity > 0 ? `${sweet.quantity} in stock` : 'Out of stock'}
+                </p>
+              </div>
+              <button
+                onClick={() => handlePurchase(sweet, 1)}
+                disabled={sweet.quantity === 0}
+                className="purchase-btn"
+              >
+                {sweet.quantity === 0 ? 'Out of Stock' : 'Add to Cart'}
+              </button>
             </div>
-            <button
-              onClick={() => handlePurchase(sweet, 1)}
-              disabled={sweet.quantity === 0}
-              className="purchase-btn"
-            >
-              {sweet.quantity === 0 ? 'Out of Stock' : 'Add to Cart'}
-            </button>
-          </div>
-        )) : null}
+          ))
+        ) : null}
       </div>
       {(!sweets || sweets.length === 0) && !isLoading && (
         <div className="no-sweets">No sweets found. Try adjusting your filters.</div>
