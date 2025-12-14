@@ -14,6 +14,7 @@
     "lint:fix": "eslint src --ext .ts --fix",
     "format": "prettier --write \"src/**/*.ts\"",
     "db:init": "tsx src/scripts/init-db.ts",
+    "db:init-schema": "tsx src/scripts/init-schema.ts",
     "db:migrate": "node-pg-migrate up",
     "db:migrate:down": "node-pg-migrate down"
   },
