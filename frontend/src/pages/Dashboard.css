@@ -135,6 +135,22 @@
   font-size: 1.1rem;
 }
 
+.error-container {
+  padding: 2rem;
+  text-align: center;
+  color: var(--text-primary);
+}
+
+.error-container h2 {
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+}
+
+.error-container p {
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
+}
+
 @media (max-width: 768px) {
   .filters {
     grid-template-columns: 1fr;

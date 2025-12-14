@@ -175,13 +175,17 @@ const AdminPanel = () => {
   };
 
   if (isLoading) {
-    return <div className="admin-panel">Loading...</div>;
+    return (
+      <div className="admin-panel">
+        <div className="loading">Loading...</div>
+      </div>
+    );
   }
 
   if (queryError) {
     return (
       <div className="admin-panel">
-        <div style={{ padding: '2rem', textAlign: 'center' }}>
+        <div className="error-container">
           <h2>Error Loading Sweets</h2>
           <p>Unable to load sweets. Please check your connection and try again.</p>
           <button onClick={() => window.location.reload()} className="btn-primary">

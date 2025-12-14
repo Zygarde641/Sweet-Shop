@@ -73,7 +73,7 @@ const Dashboard = () => {
   if (queryError) {
     return (
       <div className="dashboard">
-        <div style={{ padding: '2rem', textAlign: 'center' }}>
+        <div className="error-container">
           <h2>Error Loading Sweets</h2>
           <p>Unable to load sweets. Please check your connection and try again.</p>
           <button onClick={() => refetch()} className="btn-primary" style={{ marginTop: '1rem' }}>
@@ -135,7 +135,7 @@ const Dashboard = () => {
         {sweets.length} {sweets.length === 1 ? 'sweet' : 'sweets'} found
       </div>
       <div className="sweets-grid">
-        {sweets.map((sweet) => (
+        {sweets && sweets.length > 0 ? sweets.map((sweet) => (
           <div key={sweet.id} className="sweet-card">
             <div className="sweet-image">🍬</div>
             <div className="sweet-info">
@@ -154,9 +154,9 @@ const Dashboard = () => {
               {sweet.quantity === 0 ? 'Out of Stock' : 'Add to Cart'}
             </button>
           </div>
-        ))}
+        )) : null}
       </div>
-      {sweets.length === 0 && (
+      {(!sweets || sweets.length === 0) && !isLoading && (
         <div className="no-sweets">No sweets found. Try adjusting your filters.</div>
       )}
     </div>

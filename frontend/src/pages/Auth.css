@@ -35,6 +35,11 @@
   width: 100%;
   max-width: 400px;
   box-shadow: var(--shadow-lg);
+  transition: background-color 0.3s ease;
+}
+
+.dark-mode .auth-card {
+  background: rgba(26, 26, 26, 0.95);
 }
 
 .auth-card h1 {
@@ -51,6 +56,11 @@
   background: #f5f5f5;
   padding: 0.25rem;
   border-radius: 8px;
+  transition: background-color 0.3s ease;
+}
+
+.dark-mode .login-type-selector {
+  background: #333333;
 }
 
 .type-btn {
@@ -69,6 +79,12 @@
   background: white;
   color: var(--primary-color);
   box-shadow: var(--shadow);
+  transition: all 0.3s ease;
+}
+
+.dark-mode .type-btn.active {
+  background: #2a2a2a;
+  color: var(--primary-color);
 }
 
 .type-btn:hover:not(.active) {
@@ -135,6 +151,16 @@
   cursor: not-allowed;
 }
 
+.dark-mode .form-group input {
+  background-color: #2a2a2a;
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}
+
+.dark-mode .form-group input:disabled {
+  background-color: #1a1a1a;
+}
+
 .btn-primary {
   width: 100%;
   padding: 0.75rem;
@@ -178,6 +204,16 @@
 
 .btn-google:hover:not(:disabled) {
   background-color: #f8f9fa;
+}
+
+.dark-mode .btn-google {
+  background: #2a2a2a;
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}
+
+.dark-mode .btn-google:hover:not(:disabled) {
+  background-color: #333333;
 }
 
 .btn-google:disabled {

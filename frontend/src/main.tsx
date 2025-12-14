@@ -4,8 +4,15 @@ import { BrowserRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import ErrorBoundary from './components/ErrorBoundary';
+import { useThemeStore } from './store/themeStore';
 import App from './App';
 import './index.css';
+
+// Initialize dark mode on load
+const { isDarkMode } = useThemeStore.getState();
+if (isDarkMode) {
+  document.documentElement.classList.add('dark-mode');
+}
 
 const queryClient = new QueryClient({
   defaultOptions: {

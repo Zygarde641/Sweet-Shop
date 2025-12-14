@@ -2,6 +2,24 @@
   width: 100%;
 }
 
+.admin-panel .loading,
+.admin-panel .error-container {
+  text-align: center;
+  padding: 3rem;
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+}
+
+.admin-panel .error-container h2 {
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+}
+
+.admin-panel .error-container p {
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
+}
+
 .admin-header {
   display: flex;
   justify-content: space-between;
@@ -57,6 +75,10 @@
   background-color: #f8f9fa;
 }
 
+.dark-mode .sweets-table tbody tr:hover {
+  background-color: #2a2a2a;
+}
+
 .actions {
   display: flex;
   gap: 0.5rem;
@@ -105,6 +127,10 @@
   align-items: center;
   justify-content: center;
   z-index: 1000;
+}
+
+.dark-mode .modal-overlay {
+  background: rgba(0, 0, 0, 0.8);
 }
 
 .modal-content {
