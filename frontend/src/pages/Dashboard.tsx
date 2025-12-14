@@ -2,12 +2,13 @@ import { useState, useMemo } from 'react';
 import { useQuery } from 'react-query';
 import { getSweets, searchSweets, purchaseSweet, Sweet, SearchFilters } from '../api/sweets';
 import { useCartStore } from '../store/cartStore';
+import { formatPrice } from '../utils/format';
 import toast from 'react-hot-toast';
 import './Dashboard.css';
 
 const Dashboard = () => {
   // #region agent log
-  fetch('http://127.0.0.1:7242/ingest/c49dae96-4ee7-4b7f-a49b-2dc2505269f5',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Dashboard.tsx:8',message:'Dashboard component rendered',data:{timestamp:Date.now()},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+  fetch('http://127.0.0.1:7242/ingest/c49dae96-4ee7-4b7f-a49b-2dc2505269f5', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ location: 'Dashboard.tsx:8', message: 'Dashboard component rendered', data: { timestamp: Date.now() }, timestamp: Date.now(), sessionId: 'debug-session', runId: 'run1', hypothesisId: 'A' }) }).catch(() => { });
   // #endregion
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('');
@@ -34,7 +35,7 @@ const Dashboard = () => {
       retry: 1,
       onError: (error: any) => {
         // #region agent log
-        fetch('http://127.0.0.1:7242/ingest/c49dae96-4ee7-4b7f-a49b-2dc2505269f5',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Dashboard.tsx:32',message:'Query error occurred',data:{error:error?.message,status:error?.response?.status,code:error?.code},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
+        fetch('http://127.0.0.1:7242/ingest/c49dae96-4ee7-4b7f-a49b-2dc2505269f5', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ location: 'Dashboard.tsx:32', message: 'Query error occurred', data: { error: error?.message, status: error?.response?.status, code: error?.code }, timestamp: Date.now(), sessionId: 'debug-session', runId: 'run1', hypothesisId: 'B' }) }).catch(() => { });
         // #endregion
         console.error('Query error:', error);
         if (error.response?.status !== 401) {
@@ -44,7 +45,7 @@ const Dashboard = () => {
     }
   );
   // #region agent log
-  fetch('http://127.0.0.1:7242/ingest/c49dae96-4ee7-4b7f-a49b-2dc2505269f5',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Dashboard.tsx:39',message:'Query state after useQuery',data:{isLoading,hasError:!!queryError,dataLength:sweets?.length||0},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
+  fetch('http://127.0.0.1:7242/ingest/c49dae96-4ee7-4b7f-a49b-2dc2505269f5', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ location: 'Dashboard.tsx:39', message: 'Query state after useQuery', data: { isLoading, hasError: !!queryError, dataLength: sweets?.length || 0 }, timestamp: Date.now(), sessionId: 'debug-session', runId: 'run1', hypothesisId: 'C' }) }).catch(() => { });
   // #endregion
 
   const categories = useMemo(() => {
@@ -73,17 +74,17 @@ const Dashboard = () => {
 
   // Always render the page structure, even during loading or errors
   // #region agent log
-  fetch('http://127.0.0.1:7242/ingest/c49dae96-4ee7-4b7f-a49b-2dc2505269f5',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Dashboard.tsx:74',message:'Render decision point',data:{isLoading,hasError:!!queryError,sweetsCount:sweets?.length||0},timestamp:Date.now(),sessionId:'debug-session',runId:'run2',hypothesisId:'D'})}).catch(()=>{});
+  fetch('http://127.0.0.1:7242/ingest/c49dae96-4ee7-4b7f-a49b-2dc2505269f5', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ location: 'Dashboard.tsx:74', message: 'Render decision point', data: { isLoading, hasError: !!queryError, sweetsCount: sweets?.length || 0 }, timestamp: Date.now(), sessionId: 'debug-session', runId: 'run2', hypothesisId: 'D' }) }).catch(() => { });
   // #endregion
 
   // #region agent log
-  fetch('http://127.0.0.1:7242/ingest/c49dae96-4ee7-4b7f-a49b-2dc2505269f5',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Dashboard.tsx:79',message:'Rendering Dashboard JSX',data:{willRenderFilters:true,willRenderSweets:!isLoading&&!queryError},timestamp:Date.now(),sessionId:'debug-session',runId:'run2',hypothesisId:'E'})}).catch(()=>{});
+  fetch('http://127.0.0.1:7242/ingest/c49dae96-4ee7-4b7f-a49b-2dc2505269f5', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ location: 'Dashboard.tsx:79', message: 'Rendering Dashboard JSX', data: { willRenderFilters: true, willRenderSweets: !isLoading && !queryError }, timestamp: Date.now(), sessionId: 'debug-session', runId: 'run2', hypothesisId: 'E' }) }).catch(() => { });
   // #endregion
 
   return (
     <div className="dashboard">
       <h1>Sweet Shop</h1>
-      
+
       {/* Always show filters */}
       <div className="filters">
         <input
@@ -160,7 +161,7 @@ const Dashboard = () => {
                   <div className="sweet-info">
                     <h3>{sweet.name}</h3>
                     <p className="sweet-category">{sweet.category}</p>
-                    <p className="sweet-price">${typeof sweet.price === 'number' ? sweet.price.toFixed(2) : (parseFloat(String(sweet.price)) || 0).toFixed(2)}</p>
+                    <p className="sweet-price">${formatPrice(sweet.price)}</p>
                     <p className="sweet-quantity">
                       {sweet.quantity > 0 ? `${sweet.quantity} in stock` : 'Out of stock'}
                     </p>

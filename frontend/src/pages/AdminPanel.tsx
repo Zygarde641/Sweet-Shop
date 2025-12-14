@@ -9,12 +9,13 @@ import {
   Sweet,
   CreateSweetData,
 } from '../api/sweets';
+import { formatPrice } from '../utils/format';
 import toast from 'react-hot-toast';
 import './AdminPanel.css';
 
 const AdminPanel = () => {
   // #region agent log
-  fetch('http://127.0.0.1:7242/ingest/c49dae96-4ee7-4b7f-a49b-2dc2505269f5',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'AdminPanel.tsx:15',message:'AdminPanel component rendered',data:{timestamp:Date.now()},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+  fetch('http://127.0.0.1:7242/ingest/c49dae96-4ee7-4b7f-a49b-2dc2505269f5', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ location: 'AdminPanel.tsx:15', message: 'AdminPanel component rendered', data: { timestamp: Date.now() }, timestamp: Date.now(), sessionId: 'debug-session', runId: 'run1', hypothesisId: 'A' }) }).catch(() => { });
   // #endregion
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingSweet, setEditingSweet] = useState<Sweet | null>(null);
@@ -26,7 +27,7 @@ const AdminPanel = () => {
   const { data: sweets = [], isLoading, error: queryError } = useQuery<Sweet[]>('sweets', getSweets, {
     onError: (error: any) => {
       // #region agent log
-      fetch('http://127.0.0.1:7242/ingest/c49dae96-4ee7-4b7f-a49b-2dc2505269f5',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'AdminPanel.tsx:24',message:'Query error occurred',data:{error:error?.message,status:error?.response?.status,code:error?.code},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
+      fetch('http://127.0.0.1:7242/ingest/c49dae96-4ee7-4b7f-a49b-2dc2505269f5', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ location: 'AdminPanel.tsx:24', message: 'Query error occurred', data: { error: error?.message, status: error?.response?.status, code: error?.code }, timestamp: Date.now(), sessionId: 'debug-session', runId: 'run1', hypothesisId: 'B' }) }).catch(() => { });
       // #endregion
       console.error('Query error:', error);
       toast.error('Failed to load sweets. Please refresh the page.');
@@ -34,7 +35,7 @@ const AdminPanel = () => {
     retry: 1,
   });
   // #region agent log
-  fetch('http://127.0.0.1:7242/ingest/c49dae96-4ee7-4b7f-a49b-2dc2505269f5',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'AdminPanel.tsx:29',message:'Query state after useQuery',data:{isLoading,hasError:!!queryError,dataLength:sweets?.length||0},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
+  fetch('http://127.0.0.1:7242/ingest/c49dae96-4ee7-4b7f-a49b-2dc2505269f5', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ location: 'AdminPanel.tsx:29', message: 'Query state after useQuery', data: { isLoading, hasError: !!queryError, dataLength: sweets?.length || 0 }, timestamp: Date.now(), sessionId: 'debug-session', runId: 'run1', hypothesisId: 'C' }) }).catch(() => { });
   // #endregion
 
   const createMutation = useMutation(createSweet, {
@@ -185,7 +186,7 @@ const AdminPanel = () => {
 
   // Always render the page structure, even during loading or errors
   // #region agent log
-  fetch('http://127.0.0.1:7242/ingest/c49dae96-4ee7-4b7f-a49b-2dc2505269f5',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'AdminPanel.tsx:177',message:'Render decision point',data:{isLoading,hasError:!!queryError},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'D'})}).catch(()=>{});
+  fetch('http://127.0.0.1:7242/ingest/c49dae96-4ee7-4b7f-a49b-2dc2505269f5', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ location: 'AdminPanel.tsx:177', message: 'Render decision point', data: { isLoading, hasError: !!queryError }, timestamp: Date.now(), sessionId: 'debug-session', runId: 'run1', hypothesisId: 'D' }) }).catch(() => { });
   // #endregion
 
   return (
@@ -211,44 +212,44 @@ const AdminPanel = () => {
       )}
       {!isLoading && !queryError && (
         <div className="sweets-table-container">
-        <table className="sweets-table">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Category</th>
-              <th>Price</th>
-              <th>Quantity</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {sweets && sweets.length > 0 ? sweets.map((sweet) => (
-              <tr key={sweet.id}>
-                <td>{sweet.name}</td>
-                <td>{sweet.category}</td>
-                <td>${typeof sweet.price === 'number' ? sweet.price.toFixed(2) : (parseFloat(String(sweet.price)) || 0).toFixed(2)}</td>
-                <td>{sweet.quantity}</td>
-                <td className="actions">
-                  <button onClick={() => openEditModal(sweet)} className="btn-edit">
-                    Edit
-                  </button>
-                  <button onClick={() => setRestockSweetId(sweet.id)} className="btn-restock">
-                    Restock
-                  </button>
-                  <button onClick={() => handleDelete(sweet.id)} className="btn-delete">
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            )) : (
+          <table className="sweets-table">
+            <thead>
               <tr>
-                <td colSpan={5} style={{ textAlign: 'center', padding: '2rem' }}>
-                  No sweets found. Click "Add New Sweet" to create one.
-                </td>
+                <th>Name</th>
+                <th>Category</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Actions</th>
               </tr>
-            )}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {sweets && sweets.length > 0 ? sweets.map((sweet) => (
+                <tr key={sweet.id}>
+                  <td>{sweet.name}</td>
+                  <td>{sweet.category}</td>
+                  <td>${formatPrice(sweet.price)}</td>
+                  <td>{sweet.quantity}</td>
+                  <td className="actions">
+                    <button onClick={() => openEditModal(sweet)} className="btn-edit">
+                      Edit
+                    </button>
+                    <button onClick={() => setRestockSweetId(sweet.id)} className="btn-restock">
+                      Restock
+                    </button>
+                    <button onClick={() => handleDelete(sweet.id)} className="btn-delete">
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              )) : (
+                <tr>
+                  <td colSpan={5} style={{ textAlign: 'center', padding: '2rem' }}>
+                    No sweets found. Click "Add New Sweet" to create one.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
         </div>
       )}
 
