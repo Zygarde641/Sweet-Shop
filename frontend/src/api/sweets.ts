@@ -33,12 +33,12 @@ export interface SearchFilters {
 
 export const getSweets = async (): Promise<Sweet[]> => {
   // #region agent log
-  fetch('http://127.0.0.1:7242/ingest/c49dae96-4ee7-4b7f-a49b-2dc2505269f5',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'sweets.ts:34',message:'getSweets called',data:{timestamp:Date.now()},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'F'})}).catch(()=>{});
+  fetch('http://127.0.0.1:7242/ingest/c49dae96-4ee7-4b7f-a49b-2dc2505269f5', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ location: 'sweets.ts:34', message: 'getSweets called', data: { timestamp: Date.now() }, timestamp: Date.now(), sessionId: 'debug-session', runId: 'run1', hypothesisId: 'F' }) }).catch(() => { });
   // #endregion
   try {
     const response = await apiClient.get<{ sweets: Sweet[] }>('/sweets');
     // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/c49dae96-4ee7-4b7f-a49b-2dc2505269f5',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'sweets.ts:37',message:'getSweets success',data:{sweetsCount:response.data.sweets?.length||0,status:response.status},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'F'})}).catch(()=>{});
+    fetch('http://127.0.0.1:7242/ingest/c49dae96-4ee7-4b7f-a49b-2dc2505269f5', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ location: 'sweets.ts:37', message: 'getSweets success', data: { sweetsCount: response.data.sweets?.length || 0, status: response.status }, timestamp: Date.now(), sessionId: 'debug-session', runId: 'run1', hypothesisId: 'F' }) }).catch(() => { });
     // #endregion
     const sweets = response.data.sweets || [];
     // Ensure price and quantity are numbers
@@ -51,7 +51,7 @@ export const getSweets = async (): Promise<Sweet[]> => {
     }));
   } catch (error: any) {
     // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/c49dae96-4ee7-4b7f-a49b-2dc2505269f5',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'sweets.ts:40',message:'getSweets error',data:{error:error?.message,status:error?.response?.status,code:error?.code},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
+    fetch('http://127.0.0.1:7242/ingest/c49dae96-4ee7-4b7f-a49b-2dc2505269f5', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ location: 'sweets.ts:40', message: 'getSweets error', data: { error: error?.message, status: error?.response?.status, code: error?.code }, timestamp: Date.now(), sessionId: 'debug-session', runId: 'run1', hypothesisId: 'B' }) }).catch(() => { });
     // #endregion
     console.error('Get sweets error:', error);
     throw error;
@@ -156,6 +156,24 @@ export const restockSweet = async (id: string, quantity: number): Promise<Sweet>
     };
   } catch (error) {
     console.error('Restock sweet error:', error);
+    throw error;
+  }
+};
+
+export const releaseSweet = async (id: string, quantity: number): Promise<Sweet> => {
+  try {
+    const response = await apiClient.post<{ sweet: Sweet; message?: string }>(`/sweets/${id}/release`, { quantity });
+    const sweet = response.data.sweet;
+    if (!sweet) {
+      throw new Error('Invalid response from server');
+    }
+    return {
+      ...sweet,
+      createdAt: typeof sweet.createdAt === 'string' ? sweet.createdAt : new Date(sweet.createdAt).toISOString(),
+      updatedAt: typeof sweet.updatedAt === 'string' ? sweet.updatedAt : new Date(sweet.updatedAt).toISOString(),
+    };
+  } catch (error) {
+    console.error('Release sweet error:', error);
     throw error;
   }
 };

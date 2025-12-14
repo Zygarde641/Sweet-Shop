@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useCartStore } from '../store/cartStore';
 import { formatPrice } from '../utils/format';
+import { purchaseSweet, releaseSweet } from '../api/sweets';
 import toast from 'react-hot-toast';
 import './Cart.css';
 
@@ -41,21 +42,48 @@ const Cart = () => {
                             <div className="cart-item-actions">
                                 <div className="quantity-controls">
                                     <button
-                                        onClick={() => updateQuantity(item.id, item.cartQuantity - 1)}
+                                        onClick={async () => {
+                                            try {
+                                                await releaseSweet(item.id, 1);
+                                                updateQuantity(item.id, item.cartQuantity - 1);
+                                                toast.success('Stock released');
+                                            } catch (error) {
+                                                toast.error('Failed to update stock');
+                                            }
+                                        }}
                                         disabled={item.cartQuantity <= 1}
                                     >
                                         -
                                     </button>
                                     <span>{item.cartQuantity}</span>
                                     <button
-                                        onClick={() => updateQuantity(item.id, item.cartQuantity + 1)}
+                                        onClick={async () => {
+                                            try {
+                                                await purchaseSweet(item.id, 1);
+                                                updateQuantity(item.id, item.cartQuantity + 1);
+                                                toast.success('Added to order');
+                                            } catch (error) {
+                                                toast.error('Insufficient stock');
+                                            }
+                                        }}
                                         disabled={item.cartQuantity >= item.quantity}
                                     >
                                         +
                                     </button>
                                 </div>
                                 <button
-                                    onClick={() => removeFromCart(item.id)}
+                                    onClick={async () => {
+                                        try {
+                                            await releaseSweet(item.id, item.cartQuantity);
+                                            removeFromCart(item.id);
+                                            toast.success('Item removed and stock released');
+                                        } catch (error) {
+                                            toast.error('Failed to release stock');
+                                            // Optional: still remove from cart UI if backend fails?
+                                            // For now, let's keep it safe and enforce sync.
+                                            // Alternatively, force remove: removeFromCart(item.id);
+                                        }
+                                    }}
                                     className="btn-remove"
                                 >
                                     Remove
