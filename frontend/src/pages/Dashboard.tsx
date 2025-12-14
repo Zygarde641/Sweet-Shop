@@ -6,6 +6,9 @@ import toast from 'react-hot-toast';
 import './Dashboard.css';
 
 const Dashboard = () => {
+  // #region agent log
+  fetch('http://127.0.0.1:7242/ingest/c49dae96-4ee7-4b7f-a49b-2dc2505269f5',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Dashboard.tsx:8',message:'Dashboard component rendered',data:{timestamp:Date.now()},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+  // #endregion
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('');
   const [minPrice, setMinPrice] = useState('');
@@ -30,6 +33,9 @@ const Dashboard = () => {
       refetchInterval: 30000,
       retry: 1,
       onError: (error: any) => {
+        // #region agent log
+        fetch('http://127.0.0.1:7242/ingest/c49dae96-4ee7-4b7f-a49b-2dc2505269f5',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Dashboard.tsx:32',message:'Query error occurred',data:{error:error?.message,status:error?.response?.status,code:error?.code},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
+        // #endregion
         console.error('Query error:', error);
         if (error.response?.status !== 401) {
           toast.error('Failed to load sweets. Please refresh the page.');
@@ -37,6 +43,9 @@ const Dashboard = () => {
       },
     }
   );
+  // #region agent log
+  fetch('http://127.0.0.1:7242/ingest/c49dae96-4ee7-4b7f-a49b-2dc2505269f5',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Dashboard.tsx:39',message:'Query state after useQuery',data:{isLoading,hasError:!!queryError,dataLength:sweets?.length||0},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
+  // #endregion
 
   const categories = useMemo(() => {
     const cats = new Set<string>();
@@ -84,6 +93,9 @@ const Dashboard = () => {
     );
   }
 
+  // #region agent log
+  fetch('http://127.0.0.1:7242/ingest/c49dae96-4ee7-4b7f-a49b-2dc2505269f5',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Dashboard.tsx:87',message:'Rendering main dashboard content',data:{sweetsCount:sweets?.length||0},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'E'})}).catch(()=>{});
+  // #endregion
   return (
     <div className="dashboard">
       <h1>Sweet Shop</h1>
@@ -142,7 +154,7 @@ const Dashboard = () => {
               <div className="sweet-info">
                 <h3>{sweet.name}</h3>
                 <p className="sweet-category">{sweet.category}</p>
-                <p className="sweet-price">${sweet.price.toFixed(2)}</p>
+                <p className="sweet-price">${typeof sweet.price === 'number' ? sweet.price.toFixed(2) : (parseFloat(String(sweet.price)) || 0).toFixed(2)}</p>
                 <p className="sweet-quantity">
                   {sweet.quantity > 0 ? `${sweet.quantity} in stock` : 'Out of stock'}
                 </p>
@@ -160,6 +172,8 @@ const Dashboard = () => {
       </div>
       {(!sweets || sweets.length === 0) && !isLoading && (
         <div className="no-sweets">No sweets found. Try adjusting your filters.</div>
+      )}
+        </>
       )}
     </div>
   );

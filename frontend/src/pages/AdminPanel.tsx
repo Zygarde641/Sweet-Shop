@@ -13,6 +13,9 @@ import toast from 'react-hot-toast';
 import './AdminPanel.css';
 
 const AdminPanel = () => {
+  // #region agent log
+  fetch('http://127.0.0.1:7242/ingest/c49dae96-4ee7-4b7f-a49b-2dc2505269f5',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'AdminPanel.tsx:15',message:'AdminPanel component rendered',data:{timestamp:Date.now()},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+  // #endregion
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingSweet, setEditingSweet] = useState<Sweet | null>(null);
   const [restockSweetId, setRestockSweetId] = useState<string | null>(null);
@@ -22,11 +25,17 @@ const AdminPanel = () => {
 
   const { data: sweets = [], isLoading, error: queryError } = useQuery<Sweet[]>('sweets', getSweets, {
     onError: (error: any) => {
+      // #region agent log
+      fetch('http://127.0.0.1:7242/ingest/c49dae96-4ee7-4b7f-a49b-2dc2505269f5',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'AdminPanel.tsx:24',message:'Query error occurred',data:{error:error?.message,status:error?.response?.status,code:error?.code},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
+      // #endregion
       console.error('Query error:', error);
       toast.error('Failed to load sweets. Please refresh the page.');
     },
     retry: 1,
   });
+  // #region agent log
+  fetch('http://127.0.0.1:7242/ingest/c49dae96-4ee7-4b7f-a49b-2dc2505269f5',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'AdminPanel.tsx:29',message:'Query state after useQuery',data:{isLoading,hasError:!!queryError,dataLength:sweets?.length||0},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
+  // #endregion
 
   const createMutation = useMutation(createSweet, {
     onSuccess: async () => {
@@ -174,28 +183,14 @@ const AdminPanel = () => {
     setEditingSweet(null);
   };
 
-  if (isLoading) {
-    return (
-      <div className="admin-panel">
-        <div className="loading">Loading...</div>
-      </div>
-    );
-  }
+  // Always render the page structure, even during loading or errors
+  // #region agent log
+  fetch('http://127.0.0.1:7242/ingest/c49dae96-4ee7-4b7f-a49b-2dc2505269f5',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'AdminPanel.tsx:177',message:'Render decision point',data:{isLoading,hasError:!!queryError,willShowLoading:isLoading,willShowError:!!queryError},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'D'})}).catch(()=>{});
+  // #endregion
 
-  if (queryError) {
-    return (
-      <div className="admin-panel">
-        <div className="error-container">
-          <h2>Error Loading Sweets</h2>
-          <p>Unable to load sweets. Please check your connection and try again.</p>
-          <button onClick={() => window.location.reload()} className="btn-primary">
-            Refresh Page
-          </button>
-        </div>
-      </div>
-    );
-  }
-
+  // #region agent log
+  fetch('http://127.0.0.1:7242/ingest/c49dae96-4ee7-4b7f-a49b-2dc2505269f5',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'AdminPanel.tsx:199',message:'Rendering main admin panel content',data:{sweetsCount:sweets?.length||0},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'E'})}).catch(()=>{});
+  // #endregion
   return (
     <div className="admin-panel">
       <div className="admin-header">
@@ -221,7 +216,7 @@ const AdminPanel = () => {
               <tr key={sweet.id}>
                 <td>{sweet.name}</td>
                 <td>{sweet.category}</td>
-                <td>${sweet.price.toFixed(2)}</td>
+                <td>${typeof sweet.price === 'number' ? sweet.price.toFixed(2) : (parseFloat(String(sweet.price)) || 0).toFixed(2)}</td>
                 <td>{sweet.quantity}</td>
                 <td className="actions">
                   <button onClick={() => openEditModal(sweet)} className="btn-edit">
@@ -244,7 +239,8 @@ const AdminPanel = () => {
             )}
           </tbody>
         </table>
-      </div>
+        </div>
+      )}
 
       {isModalOpen && (
         <div className="modal-overlay" onClick={closeModal}>

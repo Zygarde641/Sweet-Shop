@@ -32,10 +32,27 @@ export interface SearchFilters {
 }
 
 export const getSweets = async (): Promise<Sweet[]> => {
+  // #region agent log
+  fetch('http://127.0.0.1:7242/ingest/c49dae96-4ee7-4b7f-a49b-2dc2505269f5',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'sweets.ts:34',message:'getSweets called',data:{timestamp:Date.now()},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'F'})}).catch(()=>{});
+  // #endregion
   try {
     const response = await apiClient.get<{ sweets: Sweet[] }>('/sweets');
-    return response.data.sweets || [];
-  } catch (error) {
+    // #region agent log
+    fetch('http://127.0.0.1:7242/ingest/c49dae96-4ee7-4b7f-a49b-2dc2505269f5',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'sweets.ts:37',message:'getSweets success',data:{sweetsCount:response.data.sweets?.length||0,status:response.status},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'F'})}).catch(()=>{});
+    // #endregion
+    const sweets = response.data.sweets || [];
+    // Ensure price and quantity are numbers
+    return sweets.map(sweet => ({
+      ...sweet,
+      price: typeof sweet.price === 'number' ? sweet.price : parseFloat(String(sweet.price)) || 0,
+      quantity: typeof sweet.quantity === 'number' ? sweet.quantity : parseInt(String(sweet.quantity)) || 0,
+      createdAt: typeof sweet.createdAt === 'string' ? sweet.createdAt : new Date(sweet.createdAt).toISOString(),
+      updatedAt: typeof sweet.updatedAt === 'string' ? sweet.updatedAt : new Date(sweet.updatedAt).toISOString(),
+    }));
+  } catch (error: any) {
+    // #region agent log
+    fetch('http://127.0.0.1:7242/ingest/c49dae96-4ee7-4b7f-a49b-2dc2505269f5',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'sweets.ts:40',message:'getSweets error',data:{error:error?.message,status:error?.response?.status,code:error?.code},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
+    // #endregion
     console.error('Get sweets error:', error);
     throw error;
   }
@@ -50,7 +67,15 @@ export const searchSweets = async (filters: SearchFilters): Promise<Sweet[]> => 
     if (filters.maxPrice !== undefined) params.append('maxPrice', filters.maxPrice.toString());
 
     const response = await apiClient.get<{ sweets: Sweet[] }>(`/sweets/search?${params.toString()}`);
-    return response.data.sweets || [];
+    const sweets = response.data.sweets || [];
+    // Ensure price and quantity are numbers
+    return sweets.map(sweet => ({
+      ...sweet,
+      price: typeof sweet.price === 'number' ? sweet.price : parseFloat(String(sweet.price)) || 0,
+      quantity: typeof sweet.quantity === 'number' ? sweet.quantity : parseInt(String(sweet.quantity)) || 0,
+      createdAt: typeof sweet.createdAt === 'string' ? sweet.createdAt : new Date(sweet.createdAt).toISOString(),
+      updatedAt: typeof sweet.updatedAt === 'string' ? sweet.updatedAt : new Date(sweet.updatedAt).toISOString(),
+    }));
   } catch (error) {
     console.error('Search sweets error:', error);
     throw error;
