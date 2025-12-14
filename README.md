@@ -6,10 +6,12 @@ A full-stack web application for managing a sweet shop inventory, built with mod
 
 - **User Authentication**
   - User registration and login
+  - Separate Employee (Admin) and User login options
   - JWT token-based authentication
   - Google OAuth integration (frontend ready)
   - Password hashing with bcrypt
   - Protected routes and role-based access
+  - Default admin account (admin@sweetshop.com / admin123)
 
 - **Sweet Management**
   - View all available sweets in a responsive grid layout
@@ -65,6 +67,15 @@ A full-stack web application for managing a sweet shop inventory, built with mod
 ### Database
 - **PostgreSQL** with UUID primary keys
 - Migrations support via SQL files
+
+## Default Admin Credentials
+
+**For Employee/Admin Login:**
+- **Email**: `admin@sweetshop.com`
+- **Password**: `admin123`
+- **Role**: Admin (full access to admin panel)
+
+**Note**: The default admin user is automatically created when the database is initialized. You can change these credentials after first login or create additional admin users through the database.
 
 ## Getting Started
 

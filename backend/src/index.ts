@@ -90,6 +90,27 @@ const initializeDatabase = async () => {
       }
       
       console.log('✅ Database schema initialized successfully!');
+      
+      // Create default admin user
+      const { hashPassword } = require('./utils/password');
+      const adminEmail = 'admin@sweetshop.com';
+      const adminPassword = 'admin123';
+      const adminName = 'Admin User';
+      
+      // Check if admin exists
+      const adminCheck = await query('SELECT id FROM users WHERE email = $1', [adminEmail]);
+      
+      if (adminCheck.rows.length === 0) {
+        const hashedPassword = await hashPassword(adminPassword);
+        await query(
+          `INSERT INTO users (email, password, name, role, created_at, updated_at)
+           VALUES ($1, $2, $3, 'admin', NOW(), NOW())`,
+          [adminEmail, hashedPassword, adminName]
+        );
+        console.log('✅ Default admin user created!');
+        console.log('   Email: admin@sweetshop.com');
+        console.log('   Password: admin123');
+      }
     } else {
       console.log('✅ Database schema already exists.');
     }
