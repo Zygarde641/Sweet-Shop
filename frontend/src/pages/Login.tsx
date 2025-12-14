@@ -1,10 +1,21 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useGoogleLogin } from '@react-oauth/google';
 import { useAuthStore } from '../store/authStore';
 import { login } from '../api/auth';
 import toast from 'react-hot-toast';
 import './Auth.css';
+
+// Conditionally import Google OAuth
+let useGoogleLogin: any = null;
+const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+if (googleClientId) {
+  try {
+    const googleAuth = require('@react-oauth/google');
+    useGoogleLogin = googleAuth.useGoogleLogin;
+  } catch (e) {
+    console.warn('Google OAuth not available');
+  }
+}
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -29,12 +40,14 @@ const Login = () => {
     }
   };
 
-  const handleGoogleLogin = useGoogleLogin({
-    onSuccess: async (_tokenResponse) => {
+  // Only enable Google login if client ID is configured
+  const handleGoogleLogin = useGoogleLogin ? useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
       try {
-        // In a real app, you would send this token to your backend
-        // For now, we'll show a message
-        toast.error('Google OAuth backend integration required');
+        // TODO: Send tokenResponse.access_token to your backend
+        // Backend should verify the token with Google and create/login user
+        toast.info('Google OAuth: Backend integration needed. Use email/password for now.');
+        console.log('Google token received:', tokenResponse);
       } catch (error) {
         toast.error('Google login failed');
       }
@@ -42,7 +55,7 @@ const Login = () => {
     onError: () => {
       toast.error('Google login failed');
     },
-  });
+  }) : null;
 
   return (
     <div className="auth-container">
@@ -79,9 +92,16 @@ const Login = () => {
         <div className="auth-divider">
           <span>OR</span>
         </div>
-        <button onClick={() => handleGoogleLogin()} className="btn-google" disabled={loading}>
-          Continue with Google
-        </button>
+        {googleClientId && handleGoogleLogin && (
+          <>
+            <div className="auth-divider">
+              <span>OR</span>
+            </div>
+            <button onClick={() => handleGoogleLogin()} className="btn-google" disabled={loading}>
+              Continue with Google
+            </button>
+          </>
+        )}
         <p className="auth-footer">
           Don't have an account? <Link to="/register">Register</Link>
         </p>

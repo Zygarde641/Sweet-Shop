@@ -17,14 +17,32 @@ const queryClient = new QueryClient({
 
 const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
 
+// Only wrap with GoogleOAuthProvider if client ID is provided
+const AppWrapper = () => {
+  if (googleClientId) {
+    return (
+      <GoogleOAuthProvider clientId={googleClientId}>
+        <QueryClientProvider client={queryClient}>
+          <BrowserRouter>
+            <App />
+          </BrowserRouter>
+        </QueryClientProvider>
+      </GoogleOAuthProvider>
+    );
+  }
+  
+  // Fallback without Google OAuth if no client ID
+  return (
+    <QueryClientProvider client={queryClient}>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </QueryClientProvider>
+  );
+};
+
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <GoogleOAuthProvider clientId={googleClientId}>
-      <QueryClientProvider client={queryClient}>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
-      </QueryClientProvider>
-    </GoogleOAuthProvider>
+    <AppWrapper />
   </React.StrictMode>
 );
